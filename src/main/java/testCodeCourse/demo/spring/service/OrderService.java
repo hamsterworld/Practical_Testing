@@ -1,4 +1,4 @@
-package testCodeCourse.demo.spring.controller;
+package testCodeCourse.demo.spring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,8 @@ import testCodeCourse.demo.spring.repository.ProductRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +25,23 @@ public class OrderService {
 
         List<String> productNumbers = request.getProductNumbers();
 
-        List<Product> products = productRepository.findAllByProductAllProductNumberIn(productNumbers);
+        List<Product> products = findProductsBy(productNumbers);
+
         Order order = Order.create(products, registerDateTime);
         Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.of(savedOrder);
     }
+
+    private List<Product> findProductsBy(List<String> productNumbers) {
+        List<Product> products = productRepository.findAllByProductAllProductNumberIn(productNumbers);
+
+        Map<String, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getProductNumber, p -> p));
+
+        return productNumbers.stream()
+                .map(productMap::get)
+                .collect(Collectors.toList());
+    }
+
 }
