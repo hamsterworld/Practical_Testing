@@ -15,6 +15,7 @@ import testCodeCourse.demo.spring.repository.OrderProductRepository;
 import testCodeCourse.demo.spring.repository.OrderRepository;
 import testCodeCourse.demo.spring.repository.ProductRepository;
 import testCodeCourse.demo.spring.repository.StockRepository;
+import testCodeCourse.demo.spring.service.request.OrderCreateServiceRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -60,7 +61,7 @@ class OrderServiceTest {
         stockRepository.saveAll(List.of(stock1,stock2));
 
 
-        OrderCreateRequest request = OrderCreateRequest.builder()
+        OrderCreateServiceRequest request = OrderCreateServiceRequest.builder()
                 .productNumbers(List.of("001","001","002","003"))
                 .build();
         LocalDateTime registerDateTime = LocalDateTime.now();
@@ -103,7 +104,7 @@ class OrderServiceTest {
         stock1.deductQuantity(1); // todo
         stockRepository.saveAll(List.of(stock1,stock2));
 
-        OrderCreateRequest request = OrderCreateRequest.builder()
+        OrderCreateServiceRequest request = OrderCreateServiceRequest.builder()
                 .productNumbers(List.of("001","001","002","003"))
                 .build();
         LocalDateTime registerDateTime = LocalDateTime.now();
@@ -121,7 +122,7 @@ class OrderServiceTest {
         Product product2 = createProduct(HANDMADE, "002", 3000);
         Product product3 = createProduct(HANDMADE, "003", 5000);
         productRepository.saveAll(List.of(product1,product2,product3));
-        OrderCreateRequest request = OrderCreateRequest.builder()
+        OrderCreateServiceRequest request = OrderCreateServiceRequest.builder()
                 .productNumbers(List.of("001", "002"))
                 .build();
         LocalDateTime registerDateTime = LocalDateTime.now();
@@ -148,7 +149,7 @@ class OrderServiceTest {
         Product product2 = createProduct(HANDMADE, "002", 3000);
         Product product3 = createProduct(HANDMADE, "003", 5000);
         productRepository.saveAll(List.of(product1,product2,product3));
-        OrderCreateRequest request = OrderCreateRequest.builder()
+        OrderCreateServiceRequest request = OrderCreateServiceRequest.builder()
                 .productNumbers(List.of("001", "001"))
                 .build();
         LocalDateTime registerDateTime = LocalDateTime.now();
