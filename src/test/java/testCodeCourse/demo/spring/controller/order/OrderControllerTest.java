@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import testCodeCourse.demo.ControllerTestSupport;
 import testCodeCourse.demo.spring.controller.order.request.OrderCreateRequest;
 import testCodeCourse.demo.spring.controller.product.request.ProductCreateRequest;
 import testCodeCourse.demo.spring.domain.product.ProductSellingStatus;
@@ -21,16 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = OrderController.class)
-class OrderControllerTest {
+//@WebMvcTest(controllers = OrderController.class)
+class OrderControllerTest extends ControllerTestSupport {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("신규 상품을 등록한다.")

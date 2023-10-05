@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import testCodeCourse.demo.IntegrationTestSupport;
 import testCodeCourse.demo.spring.domain.product.Product;
 import testCodeCourse.demo.spring.domain.product.ProductSellingStatus;
 import testCodeCourse.demo.spring.domain.product.ProductType;
@@ -16,9 +17,9 @@ import static org.assertj.core.api.Assertions.tuple;
 import static testCodeCourse.demo.spring.domain.product.ProductSellingStatus.*;
 import static testCodeCourse.demo.spring.domain.product.ProductType.HANDMADE;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class ProductRepositoryTest {
+//@ActiveProfiles("test")
+//@SpringBootTest
+class ProductRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductRepository productRepository;

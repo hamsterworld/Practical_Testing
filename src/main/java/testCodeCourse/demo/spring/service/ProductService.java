@@ -50,7 +50,8 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final OrderRepository orderRepository;
+    // 아래처럼 이렇게 책임을 분리할수있다 private 메서드를 -> public 매서드로 분리.
+    private final ProductNumberFactory productNumberFactory;
 
     @Transactional(readOnly = true)
     public List<ProductResponse> getSellingProduct(){
@@ -67,7 +68,7 @@ public class ProductService {
     @Transactional
     public ProductResponse createProduct(ProductCreateRequest request) {
 
-        String nextProductNumber = createNextProductNumber();
+        String nextProductNumber = productNumberFactory.createNextProductNumber();
 
         Product product = request.toEntity(nextProductNumber);
         Product savedProduct = productRepository.save(product);
@@ -75,15 +76,15 @@ public class ProductService {
         return ProductResponse.of(savedProduct);
     }
 
-    private String createNextProductNumber(){
-        String latesProductNumber = productRepository.findLatesProductNumber();
-        if(latesProductNumber == null){
-            return "001";
-        }
-
-        int latesProductNumberInt = Integer.parseInt(latesProductNumber);
-        int nextProductNumberInt = latesProductNumberInt + 1;
-
-        return String.format("%03d",nextProductNumberInt);
-    }
+//    private String createNextProductNumber(){
+//        String latesProductNumber = productRepository.findLatesProductNumber();
+//        if(latesProductNumber == null){
+//            return "001";
+//        }
+//
+//        int latesProductNumberInt = Integer.parseInt(latesProductNumber);
+//        int nextProductNumberInt = latesProductNumberInt + 1;
+//
+//        return String.format("%03d",nextProductNumberInt);
+//    }
 }

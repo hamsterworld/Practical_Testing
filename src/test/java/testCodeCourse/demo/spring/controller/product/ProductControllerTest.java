@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import testCodeCourse.demo.ControllerTestSupport;
 import testCodeCourse.demo.spring.controller.product.request.ProductCreateRequest;
 import testCodeCourse.demo.spring.domain.product.ProductResponse;
 import testCodeCourse.demo.spring.domain.product.ProductSellingStatus;
@@ -26,17 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ProductController.class) // Controller 만 올릴수있는 좀더 가벼운 테스트
-class ProductControllerTest {
+//@WebMvcTest(controllers = ProductController.class) // Controller 만 올릴수있는 좀더 가벼운 테스트
+class ProductControllerTest extends ControllerTestSupport {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private ProductService productService;
     // MockBean 이란?
     // container 에 mock 으로 만든객체를 넣어준다.
     // 그래서 위가 없으면 ProductController 를 테스트할때 productService 를 주입못해서

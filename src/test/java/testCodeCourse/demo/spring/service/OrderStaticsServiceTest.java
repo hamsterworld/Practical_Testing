@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import testCodeCourse.demo.IntegrationTestSupport;
 import testCodeCourse.demo.spring.client.MailSendClient;
 import testCodeCourse.demo.spring.domain.history.MailSendHistory;
 import testCodeCourse.demo.spring.domain.order.Order;
@@ -28,8 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static testCodeCourse.demo.spring.domain.product.ProductType.*;
 
-@SpringBootTest
-class OrderStaticsServiceTest {
+class OrderStaticsServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private OrderStaticsService orderStaticsService;
@@ -45,6 +45,13 @@ class OrderStaticsServiceTest {
     @Autowired
     private MailSendHistoryRepository mailSendHistoryRepository;
 
+    // 얘가 mockBean 으로 띄우기때문에 환경이 달라져서 해당 클래스는 spring 을 새로올릴것이다.
+    // 이런경우 2가지선택이있다
+    // 아래 mockBean 을 상위클래스로 올리는것.
+    // 이런경우는 다른테스트클래스도 mockBean 으로 들어갈거다.
+    // 보통은 mockBean 클래스는 외부환경을 처리하기위한 애들이 많다.
+    // 두번째방법은, mockBean 으로 들어가는 새로운환경을 만드는것
+    // 그냥 즉, 환경을 2개로 만드는것이다.
     @MockBean
     private MailSendClient mailSendClient;
 

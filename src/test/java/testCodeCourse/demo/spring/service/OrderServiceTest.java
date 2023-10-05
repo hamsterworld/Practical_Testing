@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import testCodeCourse.demo.IntegrationTestSupport;
 import testCodeCourse.demo.spring.controller.order.request.OrderCreateRequest;
 import testCodeCourse.demo.spring.domain.order.response.OrderResponse;
 import testCodeCourse.demo.spring.domain.product.Product;
@@ -23,11 +24,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static testCodeCourse.demo.spring.domain.product.ProductType.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
 // @Transactional // 이렇게하면 문제가있다. 일단 여기서는 수동삭제를 다룬다. Business Layer 테스트 (3) 47:00 ~ 48:00 다시
 // 참고 save 에 @Transactional 이 걸려있다.
-class OrderServiceTest {
+class OrderServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private ProductRepository productRepository;
@@ -42,9 +41,20 @@ class OrderServiceTest {
 
     @AfterEach
     void teatDown(){
+        // 순서를 어느정도 신경써주어야한다. 외래키조건때문에.
+        // deleteAll() 도 어느정도 신경써줘야하긴함.
+        orderProductRepository.deleteAllInBatch();
         productRepository.deleteAllInBatch();
         orderRepository.deleteAllInBatch();
-        orderProductRepository.deleteAllInBatch();
+
+        // 둘간의 차이는 무엇일까?
+        // 건마다 select 해와서 delete 해오기때문이다. (성능차이가 있을수있다.)
+        // deleteAllInBatch() 는 그렇지 않다.
+        orderRepository.deleteAll();
+        orderRepository.deleteAllInBatch();
+
+        // 결론 deleteAll,deleteAllInBatch,Transaction 이 3가지의 차이를 잘알고 그때그때사용하는것이 좋다.
+
         stockRepository.deleteAllInBatch();
     }
 
@@ -99,9 +109,20 @@ class OrderServiceTest {
         Product product3 = createProduct(HANDMADE, "003", 5000);
         productRepository.saveAll(List.of(product1,product2,product3));
 
-        Stock stock1 = Stock.create("001", 0);
+        // 팩토리매서드같은경우도 테스트코드에서는 지양하고
+        // 빌더나 생성자로 생성하는것이 좋다.
+        // 팩터리매서드코드도 어떻게보면 프로덕션코드에서 의도를 가지고만든코드이다.
+        // 생성자로 만들어도되는데 굳이 팩터리매서드를 만들엇다는것은 팩토리매서드내에서 검증을 하고싶다던가.
+        // 혹은 내가 필요한 인자만 받아서 생성하고싶다던가. 라는 생성구문이다.
+        // 그래서 지양해주자. 그래서 Product 처럼 순수한 builder, 혹은 생성자가 좋다.
+        Stock stock1 = Stock.create("001", 2);
         Stock stock2 = Stock.create("002", 2);
-        stock1.deductQuantity(1); // todo
+        stock1.deductQuantity(1); // 만약에 3개를 줄이면 여기서 준비절에서 코드가 깨져버린다. 그러면 어 왜깨졌지?
+        // todo 맥락을 이해하려는 허들이 생긴다.  (테스트 환경의 독립성을 보장하자) 주문생성실패에서 예외가 떠야한다.
+        // 그앞에 준비절 생성하다가 테스트가 깨진것이다. 테스트 주제와 맞지않는 부분에서 깨지게된것.
+        // 이테스트가 왜깨진거지? 유추하기가 어려워진다.
+        // 결론적으로는 deductQuantity 와같은 API 를 통해서
+        // 구성해야지 하는것보다는 최대한 독립적으로 테스트환경을 구성하는게 좋다.
         stockRepository.saveAll(List.of(stock1,stock2));
 
         OrderCreateServiceRequest request = OrderCreateServiceRequest.builder()
@@ -112,12 +133,13 @@ class OrderServiceTest {
         // 실행,검증
         assertThatThrownBy(() -> orderService.createOrder(request,registerDateTime))
                 .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("재고가 부족한 상품이 있습니다.");
+                .hasMessage("재고가 부족한 상품이 있습니다.");
     }
 
     @DisplayName("주문번호 리스트를 받아 주문을 생성한다.")
     @Test
     void createOrder() {
+        // 준비
         Product product1 = createProduct(HANDMADE, "001", 1000);
         Product product2 = createProduct(HANDMADE, "002", 3000);
         Product product3 = createProduct(HANDMADE, "003", 5000);
@@ -127,8 +149,10 @@ class OrderServiceTest {
                 .build();
         LocalDateTime registerDateTime = LocalDateTime.now();
 
+        // 실행
         OrderResponse orderResponse = orderService.createOrder(request,registerDateTime);
 
+        // 검증
         assertThat(orderResponse.getId()).isNotNull();
         assertThat(orderResponse)
                 .extracting("registeredDateTime","totlaPrice")
