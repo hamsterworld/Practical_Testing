@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 
 // 여기서도 체크해주고 왜 deductQuantity 내부에서도 체크해주는가?
 // 서비스입장에서의 재고 체크를 해주는것
@@ -45,8 +47,14 @@ public class OrderService {
 
         List<String> productNumbers = request.getProductNumbers();
         List<Product> products = findProductsBy(productNumbers);
+        // Product.findProductsBy(products) 나라면 이렇게 했을수도?
+        // 그러나 UtilClass 로도 뺄수있다.
+        // 또는 ServiceClass 를 하나 더만들어서 주입받은후 사용할수도있다.
 
         deductStockQuantities(products);
+        // Product.deductStockQuantities(products) 이렇게 해줬을수도?
+        // 그러나 UtilClass 로도 뺄수있다.
+        // 또는 ServiceClass 를 하나 더만들어서 주입받은후 사용할수도있다.
 
         Order order = Order.create(products, registerDateTime);
         Order savedOrder = orderRepository.save(order);
@@ -81,18 +89,18 @@ public class OrderService {
         return products.stream()
                 .filter(product -> ProductType.containsStockType(product.getType()))
                 .map(Product::getProductNumber)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private Map<String, Stock> createStockMap(List<String> stockProductNumbers) {
         List<Stock> stocks = stockRepository.findAllByProductNumberIn(stockProductNumbers);
         return stocks.stream()
-                .collect(Collectors.toMap(Stock::getProductNumber, s -> s));
+                .collect(toMap(Stock::getProductNumber, s -> s));
     }
 
     private static Map<String, Long> createCountingMapBy(List<String> stockProductNumbers) {
         return stockProductNumbers.stream()
-                .collect(Collectors.groupingBy(p -> p, Collectors.counting()));
+                .collect(groupingBy(p -> p, counting()));
     }
 
 
@@ -100,11 +108,11 @@ public class OrderService {
         List<Product> products = productRepository.findAllByProductAllProductNumberIn(productNumbers);
 
         Map<String, Product> productMap = products.stream()
-                .collect(Collectors.toMap(Product::getProductNumber, p -> p));
+                .collect(toMap(Product::getProductNumber, p -> p));
 
         return productNumbers.stream()
                 .map(productMap::get)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
 }

@@ -4,10 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import testCodeCourse.demo.IntegrationTestSupport;
-import testCodeCourse.demo.spring.controller.order.request.OrderCreateRequest;
 import testCodeCourse.demo.spring.domain.order.response.OrderResponse;
 import testCodeCourse.demo.spring.domain.product.Product;
 import testCodeCourse.demo.spring.domain.product.ProductType;
@@ -26,6 +23,7 @@ import static testCodeCourse.demo.spring.domain.product.ProductType.*;
 
 // @Transactional // 이렇게하면 문제가있다. 일단 여기서는 수동삭제를 다룬다. Business Layer 테스트 (3) 47:00 ~ 48:00 다시
 // 참고 save 에 @Transactional 이 걸려있다.
+//
 class OrderServiceTest extends IntegrationTestSupport {
 
     @Autowired
@@ -39,6 +37,14 @@ class OrderServiceTest extends IntegrationTestSupport {
     @Autowired
     private OrderService orderService;
 
+    // business Layer test(3)강의중 여기다가 @Transactional 을 걸어주면 rollback 이되니까.
+    // 사실아래도 필요없다 굉장히 편하다.
+    // 근데 방금실수에서처럼 @Service 에도 @Transactional 걸려있는것처럼 보인다.
+    // 그래서 만약에 걸려있지않은채로 @Service 가 배포가되었다던가하면 큰일난다.
+    // 물론편해서좋지만 이런 부작용도 있을것을 대비해야한다.
+
+    // 그럼 어왜 insert 는 잘날라갔죠? 안걸어줫을때도?
+    // repository 에 @Transactional 이 걸려있는 곳이 있다.
     @AfterEach
     void teatDown(){
         // 순서를 어느정도 신경써주어야한다. 외래키조건때문에.

@@ -4,22 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.http.MediaType;
 import testCodeCourse.demo.ControllerTestSupport;
 import testCodeCourse.demo.spring.controller.product.request.ProductCreateRequest;
 import testCodeCourse.demo.spring.domain.product.ProductResponse;
 import testCodeCourse.demo.spring.domain.product.ProductSellingStatus;
 import testCodeCourse.demo.spring.domain.product.ProductType;
-import testCodeCourse.demo.spring.service.ProductService;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

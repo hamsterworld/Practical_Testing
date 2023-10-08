@@ -14,6 +14,7 @@ public class ProductNumberFactory {
 
     public String createNextProductNumber(){
         String latesProductNumber = productRepository.findLatesProductNumber();
+
         if(latesProductNumber == null){
             return "001";
         }

@@ -3,8 +3,6 @@ package testCodeCourse.demo.spring.repository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import testCodeCourse.demo.IntegrationTestSupport;
 import testCodeCourse.demo.spring.domain.product.Product;
 import testCodeCourse.demo.spring.domain.product.ProductSellingStatus;
@@ -17,6 +15,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static testCodeCourse.demo.spring.domain.product.ProductSellingStatus.*;
 import static testCodeCourse.demo.spring.domain.product.ProductType.HANDMADE;
 
+//@DataJpaTest 는 jpa 와 관련된 bean 들만 넣어서 테스트해주기때문에 springbootTest 보다는 더 빠르다. 그러나 SpringBootTest 를 선호한다.
 //@ActiveProfiles("test")
 //@SpringBootTest
 class ProductRepositoryTest extends IntegrationTestSupport {
@@ -27,6 +26,7 @@ class ProductRepositoryTest extends IntegrationTestSupport {
     @DisplayName("원하는 판매상태를 가진 상품들을 조회한다.")
     @Test
     void findAllByProductSellingStatusIn() {
+
         Product product1 = createProduct("001", HANDMADE,SELLING,"아메리카노",4000);
         Product product2 = createProduct("002", HANDMADE,HOLD,"카페라떼",4500);
         Product product3 = createProduct("003", HANDMADE,STOP_SELLING,"팥빙수",7000);
